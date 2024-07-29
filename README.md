@@ -1,5 +1,5 @@
 # Rudimentary-Shell
-**Simple Shell Command Interpreter***
+**Simple Shell Command Interpreter**
 
 ## Overview
 
