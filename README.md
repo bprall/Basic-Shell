@@ -96,7 +96,4 @@ cssh$ exit
     - Two or more input redirection operators (`<`).
     - Multiple output redirection operators (`>` or `>>`).
     - File access issues during redirection.
-<<<<<<< HEAD
 - Errors in command execution and piping will be reported, with details provided by `perror`.
-=======
->>>>>>> ad0a63f520451aa6b8f5d0bf0fb9226f060edded
