@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "../include/executor.h"
 
 #define MAX_ARGS 32
 #define HISTORY_SIZE 100
