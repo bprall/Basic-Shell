@@ -9,14 +9,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "../include/executor.h"
 
 #define MAX_ARGS 32
 #define NUM_CODES 65536
-#define HISTORY_SIZE 100
 
-char *history[HISTORY_SIZE];
-int history_count = 0;
 char *strappend_str(char *s, char *t);
 char *strappend_char(char *s, char c);
 unsigned int find_encoding(char *dictionary[], char *s);
@@ -24,29 +20,6 @@ void write_code(int fd, char *dictionary[], char *s);
 void compress(char *in_file_name, char *out_file_name);
 unsigned int read_code(int fd);
 void uncompress(char *in_file_name, char *out_file_name);
-
-void add_to_history(const char *command) {
-    if (history_count < HISTORY_SIZE) {
-        history[history_count] = strdup(command);
-        history_count++;
-    } else {
-        free(history[0]);
-        memmove(history, history + 1, (HISTORY_SIZE - 1) * sizeof(char *));
-        history[HISTORY_SIZE - 1] = strdup(command);
-    }
-}
-
-void print_history() {
-    for (int i = 0; i < history_count; ++i) {
-        printf("%d: %s\n", i + 1, history[i]);
-    }
-}
-
-void free_history() {
-    for (int i = 0; i < history_count; ++i) {
-        free(history[i]);
-    }
-}
 
 
 char *strappend_str(char *s, char *t)
@@ -265,25 +238,5 @@ void uncompress(char *in_file_name, char *out_file_name)
 
     for (int i = 0; i < nextIndex; i++) {
         free(Dictionary[i]);
-    }
-}
-
-void execute_builtin_commands(char **command_line_words, size_t num_args) {
-    if (strcmp(command_line_words[0], "zip") == 0) {
-        if (num_args == 3) {
-            char *input_file = command_line_words[1];
-            char *output_file = command_line_words[2];
-            compress(input_file, output_file);
-        } else {
-            printf("Usage: zip <input_file> <output_file>\n");
-        }
-    } else if (strcmp(command_line_words[0], "unzip") == 0) {
-        if (num_args == 3) {
-            char *input_file = command_line_words[1];
-            char *output_file = command_line_words[2];
-            uncompress(input_file, output_file);
-        } else {
-            printf("Usage: unzip <input_file> <output_file>\n");
-        }
     }
 }

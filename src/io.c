@@ -7,9 +7,35 @@
 #include <string.h>
 #include <errno.h>
 #include "../include/executor.h"
-#include "../include/builtins.h"
 
 #define MAX_ARGS 32
+#define HISTORY_SIZE 100
+
+char *history[HISTORY_SIZE];
+int history_count = 0;
+
+void add_to_history(const char *command) {
+    if (history_count < HISTORY_SIZE) {
+        history[history_count] = strdup(command);
+        history_count++;
+    } else {
+        free(history[0]);
+        memmove(history, history + 1, (HISTORY_SIZE - 1) * sizeof(char *));
+        history[HISTORY_SIZE - 1] = strdup(command);
+    }
+}
+
+void print_history() {
+    for (int i = 0; i < history_count; ++i) {
+        printf("%d: %s\n", i + 1, history[i]);
+    }
+}
+
+void free_history() {
+    for (int i = 0; i < history_count; ++i) {
+        free(history[i]);
+    }
+}
 
 void handle_redirection(char **command_line_words, size_t num_args,
                         int *input_redirection, int *output_redirection, int *append_redirection,

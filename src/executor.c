@@ -113,6 +113,26 @@ void execute_forked_command(char **command_line_words, int input_redirection, in
     }
 }
 
+void execute_zip_commands(char **command_line_words, size_t num_args) {
+    if (strcmp(command_line_words[0], "zip") == 0) {
+        if (num_args == 3) {
+            char *input_file = command_line_words[1];
+            char *output_file = command_line_words[2];
+            compress(input_file, output_file);
+        } else {
+            printf("Usage: zip <input_file> <output_file>\n");
+        }
+    } else if (strcmp(command_line_words[0], "unzip") == 0) {
+        if (num_args == 3) {
+            char *input_file = command_line_words[1];
+            char *output_file = command_line_words[2];
+            uncompress(input_file, output_file);
+        } else {
+            printf("Usage: unzip <input_file> <output_file>\n");
+        }
+    }
+}
+
 void execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;
     int output_redirection = 0;
@@ -123,6 +143,6 @@ void execute_command(char **command_line_words, size_t num_args) {
 
     handle_pipes(command_line_words, pipe_fd);
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
-    execute_builtin_commands(command_line_words, num_args);
+    execute_zip_commands(command_line_words, num_args);
     execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
 }
