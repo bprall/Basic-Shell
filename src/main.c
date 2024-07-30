@@ -283,7 +283,7 @@ int main() {
         } else if (strcmp(command_line_words[0], "history") == 0) {
             print_history();
         } else {
-            execute_command(command_line_words, num_args); // Pass num_args to execute_command
+            execute_command(command_line_words, num_args);
         }
 
         free_command(command_line_words);
