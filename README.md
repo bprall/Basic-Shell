@@ -1,5 +1,5 @@
-# Rudimentary-Shell
-**Simple Shell Command Interpreter**
+# Custom-Shell
+**Custom Command Interpreter**
 
 ## Overview
 
@@ -58,7 +58,7 @@ make
 Run the compiled shell executable:
 ```sh
 cd build
-./simple_shell
+./main
 ```
 
 The shell will display a prompt (`cssh$`) where you can enter commands.

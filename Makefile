@@ -4,18 +4,18 @@ BUILD_DIR = build
 INCLUDE_DIR = include
 
 # Source files
-ZIP_SRC = $(SRC_DIR)/zip/zip.c $(SRC_DIR)/zip/unzip.c
+ZIP_SRC = $(SRC_DIR)/components/zip.c $(SRC_DIR)/components/unzip.c
 UTILS_SRC = $(SRC_DIR)/utils/zip_utils.c
-SIMPLE_SHELL_SRC = $(SRC_DIR)/simple_shell.c
-SOURCES = $(ZIP_SRC) $(UTILS_SRC) $(SIMPLE_SHELL_SRC)
+MAIN_SRC = $(SRC_DIR)/main.c
+SOURCES = $(ZIP_SRC) $(UTILS_SRC) $(MAIN_SRC)
 
 # Object files
 OBJECTS = $(patsubst $(SRC_DIR)/%, $(BUILD_DIR)/%, $(SOURCES:.c=.o))
 
 # Targets
-all: $(BUILD_DIR)/simple_shell
+all: $(BUILD_DIR)/main
 
-$(BUILD_DIR)/simple_shell: $(OBJECTS)
+$(BUILD_DIR)/main: $(OBJECTS)
 	gcc -o $@ $(OBJECTS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
