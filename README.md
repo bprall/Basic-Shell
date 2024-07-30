@@ -3,11 +3,11 @@
 
 ## Overview
 
-This project implements a basic command interpreter (shell) in C. It reads user commands, supports input and output redirection, pipelining, and includes built-in commands and command history management. The shell handles signal processing for child process cleanup, and ensures proper memory management for command history and command arguments. It also utilizes `fork` and `execvp` for command execution and handles errors while providing a minimal interactive environment. The project includes a `Makefile` for easy compilation and adds support for file compression and decompression via `zip` and `unzip` commands.
+This project implements a basic command interpreter (shell) in C. It reads user commands, supports input and output redirection, pipelining, and includes built-in commands and command history management. The shell handles signal processing for child process cleanup and ensures proper memory management for command history and command arguments. It also utilizes `fork` and `execvp` for command execution and handles errors while providing a minimal interactive environment. The project includes a `Makefile` for easy compilation and adds support for file compression and decompression via `zip` and `unzip` commands.
 
 ## Features
 
-- **Makefile:**
+- **Makefile:** Includes a `Makefile` for conveniently compiling the shell.
 - **Command Execution:** Executes commands using `fork` and `execvp`.
 
 - **Input Redirection:** Redirects input from a file using `<`.
