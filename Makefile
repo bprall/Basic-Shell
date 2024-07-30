@@ -4,7 +4,7 @@ BUILD_DIR = build
 INCLUDE_DIR = include
 
 # Source files
-COMPONENTS_SRC = $(SRC_DIR)/executor.c $(SRC_DIR)/builtins.c $(SRC_DIR)/io.c $(SRC_DIR)/utils/memory.c
+COMPONENTS_SRC = $(SRC_DIR)/executor.c $(SRC_DIR)/builtins.c $(SRC_DIR)/io.c $(SRC_DIR)/utils.c
 MAIN_SRC = $(SRC_DIR)/main.c
 SOURCES = $(COMPONENTS_SRC) $(MAIN_SRC)
 

@@ -12,14 +12,9 @@
 #include "../include/executor.h"
 #include "../include/io.h"
 #include "../include/builtins.h"
-#include "../include/memory.h"
+#include "../include/utils.h"
 
 #define MAX_ARGS 32
-
-void sigchld_handler(int signo) {
-    (void) signo;
-    while (waitpid(-1, NULL, WNOHANG) > 0) {}
-}
 
 int main() {
     struct sigaction sa;

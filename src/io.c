@@ -8,7 +8,6 @@
 #include <errno.h>
 #include "../include/executor.h"
 #include "../include/builtins.h"
-#include "../include/memory.h"
 
 #define MAX_ARGS 32
 

@@ -12,7 +12,6 @@
 #include <sys/wait.h>
 #include "../include/io.h"
 #include "../include/builtins.h"
-#include "../include/memory.h"
 
 #define MAX_ARGS 32
 

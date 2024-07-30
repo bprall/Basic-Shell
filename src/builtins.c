@@ -10,8 +10,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "../include/executor.h"
-#include "../include/io.h"
-#include "../include/memory.h"
 
 #define MAX_ARGS 32
 #define NUM_CODES 65536
