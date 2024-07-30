@@ -8,6 +8,7 @@ This project implements a basic command interpreter (shell) in C. It reads user 
 ## Features
 
 - **Makefile:** Includes a `Makefile` for conveniently compiling the shell.
+
 - **Command Execution:** Executes commands using `fork` and `execvp`.
 
 - **Input Redirection:** Redirects input from a file using `<`.

@@ -4,10 +4,9 @@ BUILD_DIR = build
 INCLUDE_DIR = include
 
 # Source files
-COMPONENTS_SRC = $(SRC_DIR)/components/zip.c $(SRC_DIR)/components/unzip.c
-UTILS_SRC = $(SRC_DIR)/utils/zip_utils.c
+COMPONENTS_SRC = $(SRC_DIR)/executor.c $(SRC_DIR)/builtins.c $(SRC_DIR)/io.c $(SRC_DIR)/utils/memory.c
 MAIN_SRC = $(SRC_DIR)/main.c
-SOURCES = $(COMPONENTS_SRC) $(UTILS_SRC) $(MAIN_SRC)
+SOURCES = $(COMPONENTS_SRC) $(MAIN_SRC)
 
 # Object files
 OBJECTS = $(patsubst $(SRC_DIR)/%, $(BUILD_DIR)/%, $(SOURCES:.c=.o))
