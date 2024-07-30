@@ -97,12 +97,22 @@ void execute_command(char **command_line_words) {
     char *output_file = NULL;
     int pipe_fd[2] = {-1, -1};
 
-    char *pipe_pos = strchr(command_line_words[0], '|');
-    if (pipe_pos != NULL) {
-        *pipe_pos = '\0';
-        char **left_cmd = command_line_words;
-        char **right_cmd = &pipe_pos + 1;
+    char **left_cmd = command_line_words;
+    char **right_cmd = NULL;
+    int pipe_index = -1;
+
+    for (int i = 0; command_line_words[i] != NULL; i++) {
+        if (strcmp(command_line_words[i], "|") == 0) {
+            pipe_index = i;
+            break;
+        }
+    }
+
+    if (pipe_index != -1) {
+        command_line_words[pipe_index] = NULL;
+        right_cmd = &command_line_words[pipe_index + 1];
         pipe(pipe_fd);
+
         if (fork() == 0) {
             dup2(pipe_fd[1], STDOUT_FILENO);
             close(pipe_fd[0]);
@@ -111,6 +121,7 @@ void execute_command(char **command_line_words) {
             perror("execvp");
             exit(1);
         }
+
         if (fork() == 0) {
             dup2(pipe_fd[0], STDIN_FILENO);
             close(pipe_fd[0]);
@@ -119,6 +130,7 @@ void execute_command(char **command_line_words) {
             perror("execvp");
             exit(1);
         }
+
         close(pipe_fd[0]);
         close(pipe_fd[1]);
         wait(NULL);
@@ -207,6 +219,7 @@ void execute_command(char **command_line_words) {
         }
     }
 }
+
 
 int main() {
     struct sigaction sa;
