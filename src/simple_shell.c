@@ -13,6 +13,8 @@
 #include <string.h>
 #include <signal.h>
 #include <limits.h>
+#include "../include/zip.h"
+#include "../include/unzip.h"
 
 #define MAX_ARGS 32
 #define HISTORY_SIZE 100
@@ -89,7 +91,7 @@ void free_command(char **words) {
     free(words);
 }
 
-void execute_command(char **command_line_words) {
+void execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;
     int output_redirection = 0;
     int append_redirection = 0;
@@ -138,6 +140,7 @@ void execute_command(char **command_line_words) {
         return;
     }
 
+    // Handle redirection
     for (int i = 0; command_line_words[i] != NULL; i++) {
         if (strcmp(command_line_words[i], "<") == 0) {
             if (input_redirection) {
@@ -164,6 +167,26 @@ void execute_command(char **command_line_words) {
             output_file = command_line_words[i + 1];
             command_line_words[i] = NULL;
         }
+    }
+
+    if (strcmp(command_line_words[0], "zip") == 0) {
+        if (num_args == 3) {
+            char *input_file = command_line_words[1];
+            char *output_file = command_line_words[2];
+            compress(input_file, output_file); // call the compress function
+        } else {
+            printf("Usage: zip <input_file> <output_file>\n");
+        }
+        return;
+    } else if (strcmp(command_line_words[0], "unzip") == 0) {
+        if (num_args == 3) {
+            char *input_file = command_line_words[1];
+            char *output_file = command_line_words[2];
+            uncompress(input_file, output_file); // call the uncompress function
+        } else {
+            printf("Usage: unzip <input_file> <output_file>\n");
+        }
+        return;
     }
 
     pid_t pid = fork();
@@ -220,7 +243,6 @@ void execute_command(char **command_line_words) {
     }
 }
 
-
 int main() {
     struct sigaction sa;
     sa.sa_handler = sigchld_handler;
@@ -261,7 +283,7 @@ int main() {
         } else if (strcmp(command_line_words[0], "history") == 0) {
             print_history();
         } else {
-            execute_command(command_line_words);
+            execute_command(command_line_words, num_args); // Pass num_args to execute_command
         }
 
         free_command(command_line_words);
