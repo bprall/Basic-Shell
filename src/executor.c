@@ -11,11 +11,10 @@
 #include <sys/types.h>  
 #include <sys/wait.h>
 #include "../include/io.h"
-#include "../include/builtins.h"
+#include "../include/include_builtins/builtins.h"
 #include "../include/utils.h"
 
 #define MAX_ARGS 32
-
 
 void handle_pipes(char **command_line_words, int pipe_fd[]) {
     char **left_cmd = command_line_words;
@@ -115,121 +114,7 @@ void execute_forked_command(char **command_line_words, int input_redirection, in
     }
 }
 
-void execute_zip_commands(char **command_line_words, size_t num_args) {
-    if (strcmp(command_line_words[0], "zip") == 0) {
-        if (num_args == 3) {
-            char *input_file = command_line_words[1];
-            char *output_file = command_line_words[2];
-            compress(input_file, output_file);
-        } else {
-            printf("Usage: zip <input_file> <output_file>\n");
-        }
-    } else if (strcmp(command_line_words[0], "unzip") == 0) {
-        if (num_args == 3) {
-            char *input_file = command_line_words[1];
-            char *output_file = command_line_words[2];
-            uncompress(input_file, output_file);
-        } else {
-            printf("Usage: unzip <input_file> <output_file>\n");
-        }
-    }
-}
 
-void execute_help_command(char **command_line_words, size_t num_args) {
-    if (num_args > 1) {
-        cmd_help(command_line_words[1]);
-    } else {
-        cmd_help(NULL);
-    }
-}
-
-void execute_sort_command(char **command_line_words, size_t num_args) {
-    if (num_args < 2) {
-        return;
-    }
-
-    int reverse = 0;
-    int actual_num_args = num_args - 1;
-
-    if (strcmp(command_line_words[1], "-r") == 0) {
-        reverse = 1;
-        if (actual_num_args < 2) {
-            return;
-        }
-        actual_num_args--;
-        command_line_words++;
-    }
-
-    double *numbers = (double *)malloc(actual_num_args * sizeof(double));
-    if (numbers == NULL) {
-        fprintf(stderr, "Memory allocation failed.\n");
-        return;
-    }
-
-    for (int i = 0; i < actual_num_args; i++) {
-        if (!is_valid_num(command_line_words[i + 1])) {
-            fprintf(stderr, "%s is not a valid number.\n", command_line_words[i + 1]);
-            free(numbers);
-            return;
-        }
-        numbers[i] = atof(command_line_words[i + 1]);
-    }
-
-    sort(numbers, actual_num_args);
-
-    if (reverse) {
-        for (int i = actual_num_args - 1; i >= 0; i--) {
-            printf("%g\n", numbers[i]);
-        }
-    } else {
-        for (int i = 0; i < actual_num_args; i++) {
-            printf("%g\n", numbers[i]);
-        }
-    }
-
-    free(numbers);
-}
-
-
-void execute_wc_command(char **command_line_words, size_t num_args) {
-    int show[3] = {1, 1, 1};
-    int total_counts[3] = {0};
-    int file_count = 0;
-
-    for (size_t i = 1; i < num_args; i++) {
-        if (command_line_words[i][0] == '-') {
-            if (strcmp(command_line_words[i], "-l") == 0) {
-                show[1] = show[2] = 0;
-            } else if (strcmp(command_line_words[i], "-w") == 0) {
-                show[0] = show[2] = 0;
-            } else if (strcmp(command_line_words[i], "-c") == 0) {
-                show[0] = show[1] = 0;
-            } else {
-                printf("Invalid argument\n");
-            }
-        } else {
-            int *counts = get_counts(command_line_words[i]);
-            if (counts != NULL) {
-                print_counts(show, counts, command_line_words[i]);
-                for (int j = 0; j < 3; j++) {
-                    total_counts[j] += counts[j];
-                }
-                free(counts);
-                file_count++;
-            }
-        }
-    }
-
-    if (file_count == 0) {
-        int *counts = get_counts("");
-        if (counts != NULL) {
-            print_counts(show, counts, "");
-            free(counts);
-        }
-    } else if (file_count > 1) {
-        print_counts(show, total_counts, "total");
-    }
-}
 
 void execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;

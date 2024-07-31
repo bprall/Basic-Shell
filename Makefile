@@ -2,11 +2,16 @@
 SRC_DIR = src
 BUILD_DIR = build
 INCLUDE_DIR = include
+BUILTINS_DIR = $(SRC_DIR)/builtins
 
 # Source files
-COMPONENTS_SRC = $(SRC_DIR)/executor.c $(SRC_DIR)/builtins.c $(SRC_DIR)/io.c $(SRC_DIR)/utils.c
-MAIN_SRC = $(SRC_DIR)/main.c
-SOURCES = $(COMPONENTS_SRC) $(MAIN_SRC)
+SRC_FILES = $(SRC_DIR)/executor.c $(SRC_DIR)/io.c $(SRC_DIR)/utils.c
+
+# Include all .c files from src/builtins
+BUILTINS_SRC = $(wildcard $(BUILTINS_DIR)/*.c)
+
+# All source files
+SOURCES = $(SRC_FILES) $(BUILTINS_SRC) $(SRC_DIR)/main.c
 
 # Object files
 OBJECTS = $(patsubst $(SRC_DIR)/%, $(BUILD_DIR)/%, $(SOURCES:.c=.o))

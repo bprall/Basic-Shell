@@ -11,7 +11,6 @@
 #include <limits.h>
 #include "../include/executor.h"
 #include "../include/io.h"
-#include "../include/builtins.h"
 #include "../include/utils.h"
 
 #define MAX_ARGS 32
