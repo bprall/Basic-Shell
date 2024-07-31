@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 void cmd_help(const char *command) {
     if (command == NULL) {
         // No command specified, display general help
@@ -19,8 +18,12 @@ void cmd_help(const char *command) {
         printf("\tpwd - Print the current working directory\n");
         printf("\twc [-l] [-w] [-c] [FILES...] - Print the number of lines, words, and characters in files\n");
         printf("\tsort [-r] num1 num2 ... - Sort numbers in ascending or descending order\n");
+        printf("\tmv [source] [destination] - Move or rename files and directories\n");
+        printf("\techo [text] - Print the specified text to the terminal\n");
+        printf("\tcat [file...] - Concatenate and display the content of files\n");
+        printf("\tgrep [pattern] [file...] - Search for a specified pattern in files and print matching lines\n");
+        printf("\tclear - Clear the terminal screen\n");
         printf("\texit - Exit the shell\n");
-        // Other commands 
     } else if (strcmp(command, "history") == 0) {
         // Display help for the history command
         printf("Usage: history [count]\n");
@@ -65,11 +68,42 @@ void cmd_help(const char *command) {
     } else if (strcmp(command, "wc") == 0) {
         // Display help for the wc command
         printf("Usage: wc [-l] [-w] [-c] [FILES...]\n");
-        printf("where:\n");
-        printf("\t-l prints the number of lines\n");
-        printf("\t-w prints the number of words\n");
-        printf("\t-c prints the number of characters\n");
-        printf("\tFILES if no files are given, then read from standard input\n");
+        printf("Description: Prints the number of lines, words, and characters in files. If no files are given, reads from standard input.\n");
+        printf("Options:\n");
+        printf("\t-l\tPrint the number of lines\n");
+        printf("\t-w\tPrint the number of words\n");
+        printf("\t-c\tPrint the number of characters\n");
+        printf("Example:\n");
+        printf("\tcssh$ wc -l file.txt\n");
+    } else if (strcmp(command, "mv") == 0) {
+        // Display help for the mv command
+        printf("Usage: mv [source] [destination]\n");
+        printf("Description: Moves or renames files and directories.\n");
+        printf("Example:\n");
+        printf("\tcssh$ mv file1.txt /new/location/file1.txt\n");
+        printf("\tcssh$ mv oldname.txt newname.txt\n");
+    } else if (strcmp(command, "echo") == 0) {
+        // Display help for the echo command
+        printf("Usage: echo [text]\n");
+        printf("Description: Prints the specified text to the terminal.\n");
+        printf("Example:\n");
+        printf("\tcssh$ echo \"Hello, World!\"\n");
+    } else if (strcmp(command, "cat") == 0) {
+        // Display help for the cat command
+        printf("Usage: cat [file...]\n");
+        printf("Description: Concatenates and displays the content of files.\n");
+        printf("Example:\n");
+        printf("\tcssh$ cat file1.txt file2.txt\n");
+    } else if (strcmp(command, "grep") == 0) {
+        // Display help for the grep command
+        printf("Usage: grep [pattern] [file...]\n");
+        printf("Description: Searches for a specified pattern in files and prints matching lines.\n");
+        printf("Example:\n");
+        printf("\tcssh$ grep 'pattern' file.txt\n");
+    } else if (strcmp(command, "clear") == 0) {
+        // Display help for the clear command
+        printf("Usage: clear\n");
+        printf("Description: Clears the terminal screen.\n");
     } else if (strcmp(command, "exit") == 0) {
         // Display help for the exit command
         printf("Usage: exit\n");
