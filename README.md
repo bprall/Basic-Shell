@@ -113,8 +113,8 @@ cssh$ history
 
 - **Sort Numbers:**
 ```sh
-cssh$ sort 3 1 4 1 5 9 2 6 5 3 5
-cssh$ sort -r 3 1 4 1 5 9 2 6 5 3 5
+cssh$ sort 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5
+cssh$ sort -r 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5
 ```
 
 - **Count lines, words, and characters in a file:**
