@@ -129,7 +129,7 @@ cssh$ history | grep "search_term"
 
 - **Zip and Unzip Files with Default Names:**
 ```sh
-cssh$ zip example.zip example.txt && unzip example.zip
+cssh$ zip example.txt example.zip && unzip example.zip
 ```
 
 - **Display Help for Commands and View History:**
