@@ -27,6 +27,8 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `history`: Show the history of commands entered.
 
+  - `sort [-r]`: Sort a list of numbers in ascending order by default. If -r is specified, it sorts the numbers in reverse order.
+
   - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
 
   - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
@@ -107,6 +109,12 @@ cssh$ pwd
 - **View command history:**
 ```sh
 cssh$ history
+```
+
+- **Sort Numbers:**
+```sh
+cssh$ sort 3 1 4 1 5 9 2 6 5 3 5
+cssh$ sort -r 3 1 4 1 5 9 2 6 5 3 5
 ```
 
 - **Count lines, words, and characters in a file:**

@@ -142,6 +142,54 @@ void execute_help_command(char **command_line_words, size_t num_args) {
     }
 }
 
+void execute_sort_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2) {
+        return;
+    }
+
+    int reverse = 0;
+    int actual_num_args = num_args - 1;
+
+    if (strcmp(command_line_words[1], "-r") == 0) {
+        reverse = 1;
+        if (actual_num_args < 2) {
+            return;
+        }
+        actual_num_args--;
+        command_line_words++;
+    }
+
+    double *numbers = (double *)malloc(actual_num_args * sizeof(double));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return;
+    }
+
+    for (int i = 0; i < actual_num_args; i++) {
+        if (!is_valid_num(command_line_words[i + 1])) {
+            fprintf(stderr, "%s is not a valid number.\n", command_line_words[i + 1]);
+            free(numbers);
+            return;
+        }
+        numbers[i] = atof(command_line_words[i + 1]);
+    }
+
+    sort(numbers, actual_num_args);
+
+    if (reverse) {
+        for (int i = actual_num_args - 1; i >= 0; i--) {
+            printf("%g\n", numbers[i]);
+        }
+    } else {
+        for (int i = 0; i < actual_num_args; i++) {
+            printf("%g\n", numbers[i]);
+        }
+    }
+
+    free(numbers);
+}
+
+
 void execute_wc_command(char **command_line_words, size_t num_args) {
     int show[3] = {1, 1, 1};
     int total_counts[3] = {0};
@@ -198,6 +246,8 @@ void execute_command(char **command_line_words, size_t num_args) {
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
     if (strcmp(command_line_words[0], "wc") == 0) {
         execute_wc_command(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "sort") == 0) {
+        execute_sort_command(command_line_words, num_args);
     } else {
     execute_zip_commands(command_line_words, num_args);
     execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
