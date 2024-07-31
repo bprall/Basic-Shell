@@ -47,6 +47,8 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `clear`: Clear the terminal screen.
 
+  - `kill [pid]`: Terminate a process by its process ID (PID).
+
   - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
 
 - **File Compression and Decompression:**
@@ -88,95 +90,52 @@ The shell will display a prompt (`cssh$`) where you can enter commands.
 
 ## Command Examples
 
-- **Run a command:**
+- **Change Directory and List Files:**
 ```sh
-cssh$ ls -l
+cssh$ cd /path/to/directory && ls -l
 ```
 
-- **Input redirection:**
+- **Print Working Directory and View Files:**
 ```sh
-cssh$ cat < input.txt
+cssh$ pwd && ls -l
 ```
 
-- **Output redirection:**
+- **Redirect Input and Count Lines in a File:**
 ```sh
-cssh$ echo "Hello, World!" > output.txt
+cssh$ wc -l < input.txt
 ```
 
-- **Append output redirection:**
+- **Redirect Output and View Changes:**
 ```sh
-cssh$ echo "Appending text" >> output.txt
-```
-- **Command piping:**
-```sh
-cssh$ ls -l | grep "txt"
+cssh$ echo "Hello, World!" > output.txt && cat output.txt
 ```
 
-- **Change directory:**
+- **Append Output and Sort the File Content:**
 ```sh
-cssh$ cd /path/to/directory
+cssh$ echo "Appending text" >> output.txt && sort output.txt
 ```
 
-- **Print working directory:**
+- **Search for Patterns and Display Results:**
 ```sh
-cssh$ pwd
+cssh$ grep "pattern" file.txt | sort
 ```
 
-- **View command history:**
+- **View Command History and Search:**
 ```sh
-cssh$ history
+cssh$ history | grep "search_term"
 ```
 
-- **Sort Numbers:**
+- **Zip and Unzip Files with Default Names:**
 ```sh
-cssh$ sort 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5
-cssh$ sort -r 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5
+cssh$ zip example.zip example.txt && unzip example.zip
 ```
 
-- **Count lines, words, and characters in a file:**
+- **Display Help for Commands and View History:**
 ```sh
-cssh$ wc -l file.txt
-cssh$ wc -w file.txt
-cssh$ wc -c file.txt
+cssh$ help && history
 ```
 
-or
-```sh
-cssh$ wc file.txt
-```
-
-- **Display help for a command:**
-```sh
-cssh$ help history
-cssh$ help zip
-```
-
-- ****
-```sh
-cssh$ help
-```
-
-- **Zip a file:**
-```sh
-cssh$ zip example.txt example.zip
-```
-
-or with default output file name:
-```sh
-cssh$ zip example.txt
-```
-
-- **Unzip a file:**
-```sh
-cssh$ unzip example.zip example.txt
-```
-
-or with default output file name:
-```sh
-cssh$ unzip example.zip
-```
-
-- **Exit the shell:**
+- **Exit the Shell:**
 ```sh
 cssh$ exit
 ```
