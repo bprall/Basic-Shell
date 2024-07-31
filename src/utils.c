@@ -12,8 +12,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define MAX_ARGS 32
-
 
 void free_command(char **words, size_t num_args) {
     for (size_t i = 0; i < num_args; ++i) {

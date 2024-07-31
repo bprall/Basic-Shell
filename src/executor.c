@@ -17,47 +17,77 @@
 
 
 void handle_pipes(char **command_line_words) {
-    char **left_cmd = command_line_words;
-    char **right_cmd = NULL;
-    int pipe_fd[2];
-    int pipe_index = -1;
-
-    for (int i = 0; command_line_words[i] != NULL; i++) {
+    int pipe_count = 0;
+    int i = 0;
+    
+    // Count the number of pipes
+    while (command_line_words[i] != NULL) {
         if (strcmp(command_line_words[i], "|") == 0) {
-            pipe_index = i;
-            break;
+            pipe_count++;
+        }
+        i++;
+    }
+    
+    int pipe_fd[pipe_count * 2];
+    for (i = 0; i < pipe_count; i++) {
+        if (pipe(pipe_fd + i * 2) == -1) {
+            perror("pipe");
+            exit(1);
         }
     }
 
-    if (pipe_index != -1) {
-        command_line_words[pipe_index] = NULL;
-        right_cmd = &command_line_words[pipe_index + 1];
-        pipe(pipe_fd);
+    char **cmd_start = command_line_words;
+    char **cmd_end = command_line_words;
+    
+    for (i = 0; i <= pipe_count; i++) {
+        if (i < pipe_count) {
+            cmd_end = command_line_words;
+            while (*cmd_end != NULL && strcmp(*cmd_end, "|") != 0) {
+                cmd_end++;
+            }
+            *cmd_end = NULL;
+        } else {
+            cmd_end = command_line_words + i * 2;
+        }
 
-        pid_t pid1 = fork();
-        if (pid1 == 0) {
-            dup2(pipe_fd[1], STDOUT_FILENO);
-            close(pipe_fd[0]);
-            close(pipe_fd[1]);
-            execvp(left_cmd[0], left_cmd);
+        pid_t pid = fork();
+        if (pid == -1) {
+            perror("fork");
+            exit(1);
+        } else if (pid == 0) {
+            if (i > 0) {
+                dup2(pipe_fd[(i - 1) * 2], STDIN_FILENO);
+            }
+            if (i < pipe_count) {
+                dup2(pipe_fd[i * 2 + 1], STDOUT_FILENO);
+            }
+
+            for (int j = 0; j < pipe_count * 2; j++) {
+                close(pipe_fd[j]);
+            }
+
+            execvp(cmd_start[0], cmd_start);
             perror("execvp");
             exit(1);
         }
 
-        pid_t pid2 = fork();
-        if (pid2 == 0) {
-            dup2(pipe_fd[0], STDIN_FILENO);
-            close(pipe_fd[0]);
-            close(pipe_fd[1]);
-            execvp(right_cmd[0], right_cmd);
-            perror("execvp");
-            exit(1);
-        }
+        cmd_start = cmd_end + 1;
 
-        close(pipe_fd[0]);
-        close(pipe_fd[1]);
-        waitpid(pid1, NULL, 0);
-        waitpid(pid2, NULL, 0);
+        if (i > 0) {
+            close(pipe_fd[(i - 1) * 2]);
+        }
+        if (i < pipe_count) {
+            close(pipe_fd[i * 2 + 1]);
+        }
+    }
+
+    for (i = 0; i < pipe_count * 2; i++) {
+        close(pipe_fd[i]);
+    }
+
+    int status;
+    for (i = 0; i <= pipe_count; i++) {
+        wait(&status);
     }
 }
 
@@ -131,20 +161,6 @@ int execute_command(char **command_line_words, size_t num_args) {
 
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
 
-    char **cmd_with_pipes = malloc((num_args + 1) * sizeof(char *));
-    if (cmd_with_pipes == NULL) {
-        perror("malloc");
-        return 0; 
-    }
-    memcpy(cmd_with_pipes, command_line_words, num_args * sizeof(char *));
-    cmd_with_pipes[num_args] = NULL;
-
-    if (strchr((char *)command_line_words, '|')) {
-        handle_pipes(cmd_with_pipes);
-        free(cmd_with_pipes);
-        return 1; 
-    }
-
     int result;
     if (strcmp(command_line_words[0], "wc") == 0) {
         result = execute_wc_command(command_line_words, num_args);
@@ -182,33 +198,43 @@ int execute_command(char **command_line_words, size_t num_args) {
     } else {
         result = execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }
-
-    free(cmd_with_pipes);
     return result;
 }
 
 void execute_commands(char **command_line_words, size_t num_args) {
     size_t start_index = 0;
     int status = 1;
+    int pipe_found = 0;
 
     for (size_t i = 0; i < num_args; i++) {
-        if (strcmp(command_line_words[i], "&&") == 0) {
-            command_line_words[i] = NULL;
-            size_t current_command_args = i - start_index;
-            char **current_command = command_line_words + start_index;
-
-            status = execute_command(current_command, current_command_args);
-            if (status == 0) {
-                return;
-            }
-
-            start_index = i + 1;
+        if (strcmp(command_line_words[i], "|") == 0) {
+            pipe_found = 1;
+            break;
         }
     }
 
-    if (start_index < num_args) {
-        char **last_command = command_line_words + start_index;
-        size_t last_command_args = num_args - start_index;
-        status = execute_command(last_command, last_command_args);
+    if (pipe_found) {
+        handle_pipes(command_line_words);
+    } else {
+        for (size_t i = 0; i < num_args; i++) {
+            if (strcmp(command_line_words[i], "&&") == 0) {
+                command_line_words[i] = NULL;
+                size_t current_command_args = i - start_index;
+                char **current_command = command_line_words + start_index;
+
+                status = execute_command(current_command, current_command_args);
+                if (status == 0) {
+                    return;
+                }
+
+                start_index = i + 1;
+            }
+        }
+
+        if (start_index < num_args) {
+            char **last_command = command_line_words + start_index;
+            size_t last_command_args = num_args - start_index;
+            status = execute_command(last_command, last_command_args);
+        }
     }
 }
