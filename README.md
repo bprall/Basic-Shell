@@ -114,12 +114,12 @@ cssh$ echo "Hello, World!" > output.txt && cat output.txt
 
 - **Append Output and Sort the File Content:**
 ```sh
-cssh$ echo "Appending text" >> output.txt && sort output.txt
+cssh$ echo "Appending text" >> output.txt && cat output.txt
 ```
 
 - **Search for Patterns and Display Results:**
 ```sh
-cssh$ grep "pattern" file.txt | sort
+cssh$ grep "pattern" file.txt
 ```
 
 - **View Command History and Search:**
