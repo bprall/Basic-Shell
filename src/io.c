@@ -26,8 +26,12 @@ void add_to_history(const char *command) {
     }
 }
 
-void print_history() {
-    for (int i = 0; i < history_count; ++i) {
+void print_history(int count) {
+    if (count <= 0 || count > history_count) {
+        count = history_count; 
+    }
+
+    for (int i = history_count - count; i < history_count; ++i) {
         printf("%d: %s\n", i + 1, history[i]);
     }
 }

@@ -10,6 +10,7 @@
 #include <unistd.h>     
 #include <sys/types.h>  
 #include <sys/wait.h>
+#include <limits.h>
 #include "../include/io.h"
 #include "../include/builtins/builtins.h"
 #include "../include/utils.h"
@@ -115,26 +116,78 @@ void execute_forked_command(char **command_line_words, int input_redirection, in
 
 
 
-void execute_command(char **command_line_words, size_t num_args) {
+int execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;
     int output_redirection = 0;
     int append_redirection = 0;
     char *input_file = NULL;
     char *output_file = NULL;
-    int pipe_fd[2] = {-1, -1};
 
     if (num_args > 0 && strcmp(command_line_words[0], "help") == 0) {
         execute_help_command(command_line_words, num_args);
-        return; 
+        return 1; // Return 1 to indicate success
     }
-    handle_pipes(command_line_words, pipe_fd);
+
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
+
     if (strcmp(command_line_words[0], "wc") == 0) {
         execute_wc_command(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "cd") == 0) {
+        if (num_args > 1) {
+            if (chdir(command_line_words[1]) != 0) {
+                perror("chdir");
+                return 0;
+            }
+        } else {
+            printf("cd: missing argument\n");
+            return 0; // Return 0 to indicate failure
+        }
+    } else if (strcmp(command_line_words[0], "pwd") == 0) {
+        char cwd[PATH_MAX];
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            printf("%s\n", cwd);
+        } else {
+            perror("getcwd");
+            return 0;
+        }
+    } else if (strcmp(command_line_words[0], "history") == 0) {
+        int num_to_show = (num_args > 1) ? atoi(command_line_words[1]) : 0;
+        print_history(num_to_show);
     } else if (strcmp(command_line_words[0], "sort") == 0) {
         execute_sort_command(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "zip") == 0) {
+        execute_zip_commands(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "unzip") == 0) {
+        execute_zip_commands(command_line_words, num_args);
     } else {
-    execute_zip_commands(command_line_words, num_args);
-    execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
+        execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }
-}   
+
+    return 1;
+}
+
+void execute_commands(char **command_line_words, size_t num_args) {
+    size_t start_index = 0;
+    int status = 1; // Assume success
+
+    for (size_t i = 0; i < num_args; i++) {
+        if (strcmp(command_line_words[i], "&&") == 0) {
+            command_line_words[i] = NULL;
+            size_t current_command_args = i - start_index;
+            char **current_command = command_line_words + start_index;
+
+            status = execute_command(current_command, current_command_args);
+            if (status == 0) {
+                return;
+            }
+
+            start_index = i + 1;
+        }
+    }
+
+    if (start_index < num_args) {
+        char **last_command = command_line_words + start_index;
+        size_t last_command_args = num_args - start_index;
+        status = execute_command(last_command, last_command_args);
+    }
+}

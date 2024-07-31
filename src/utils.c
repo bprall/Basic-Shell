@@ -15,12 +15,11 @@
 #define MAX_ARGS 32
 
 
-void free_command(char **words) {
-    for (int i = 0; i < MAX_ARGS; ++i) {
-        if (words[i] == NULL) {
-            break;
+void free_command(char **words, size_t num_args) {
+    for (size_t i = 0; i < num_args; ++i) {
+        if (words[i] != NULL) {
+            free(words[i]);
         }
-        free(words[i]);
     }
     free(words);
 }
