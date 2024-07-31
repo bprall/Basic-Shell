@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_ARGS 32
 
 void cmd_help(const char *command) {
     if (command == NULL) {

@@ -12,8 +12,8 @@
 #include <unistd.h>
 #include "../../include/utils.h"
 
-#define MAX_ARGS 32
 #define NUM_CODES 65536
+
 
 unsigned int read_code(int fd)
 {

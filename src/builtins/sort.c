@@ -7,7 +7,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_ARGS 32
 
 int is_valid_num(char *word) {
     int found_dot = 0;

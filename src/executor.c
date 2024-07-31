@@ -11,10 +11,9 @@
 #include <sys/types.h>  
 #include <sys/wait.h>
 #include "../include/io.h"
-#include "../include/include_builtins/builtins.h"
+#include "../include/builtins/builtins.h"
 #include "../include/utils.h"
 
-#define MAX_ARGS 32
 
 void handle_pipes(char **command_line_words, int pipe_fd[]) {
     char **left_cmd = command_line_words;

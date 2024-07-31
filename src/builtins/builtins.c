@@ -10,14 +10,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "../../include/utils.h"
-#include "../../include/include_builtins/help.h"
-#include "../../include/include_builtins/sort.h"
-#include "../../include/include_builtins/unzip.h"
-#include "../../include/include_builtins/zip.h"
-#include "../../include/include_builtins/wc.h"
+#include "../../include/builtins/help.h"
+#include "../../include/builtins/sort.h"
+#include "../../include/builtins/unzip.h"
+#include "../../include/builtins/zip.h"
+#include "../../include/builtins/wc.h"
 
-#define MAX_ARGS 32
-#define NUM_CODES 65536
 
 void execute_zip_commands(char **command_line_words, size_t num_args) {
     if (strcmp(command_line_words[0], "zip") == 0) {

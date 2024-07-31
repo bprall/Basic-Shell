@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define MAX_ARGS 32
 
 int *get_counts(char *filename) {
     int *counts = malloc(3 * sizeof(int));
