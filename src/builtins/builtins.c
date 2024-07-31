@@ -15,8 +15,8 @@
 #include "../../include/builtins/unzip.h"
 #include "../../include/builtins/zip.h"
 #include "../../include/builtins/wc.h"
+#include "../../include/builtins/sortwords.h"
 
-// Returns 1 on success, 0 on failure
 int execute_zip_commands(char **command_line_words, size_t num_args) {
     if (strcmp(command_line_words[0], "zip") == 0) {
         if (num_args == 3) {
@@ -42,20 +42,18 @@ int execute_zip_commands(char **command_line_words, size_t num_args) {
     return 0;
 }
 
-// Returns 1 on success, 0 on failure
 int execute_help_command(char **command_line_words, size_t num_args) {
     if (num_args > 1) {
         cmd_help(command_line_words[1]);
     } else {
         cmd_help(NULL);
     }
-    return 1; // Always succeed in displaying help
+    return 1; 
 }
 
-// Returns 1 on success, 0 on failure
 int execute_sort_command(char **command_line_words, size_t num_args) {
     if (num_args < 2) {
-        return 0; // Not enough arguments
+        return 0; 
     }
 
     int reverse = 0;
@@ -64,7 +62,7 @@ int execute_sort_command(char **command_line_words, size_t num_args) {
     if (strcmp(command_line_words[1], "-r") == 0) {
         reverse = 1;
         if (actual_num_args < 2) {
-            return 0; // Not enough numbers to sort
+            return 0; 
         }
         actual_num_args--;
         command_line_words++;
@@ -101,7 +99,6 @@ int execute_sort_command(char **command_line_words, size_t num_args) {
     return 1;
 }
 
-// Returns 1 on success, 0 on failure
 int execute_wc_command(char **command_line_words, size_t num_args) {
     int show[3] = {1, 1, 1};
     int total_counts[3] = {0};
@@ -146,4 +143,16 @@ int execute_wc_command(char **command_line_words, size_t num_args) {
         print_counts(show, total_counts, "total");
     }
     return 1;
+}
+
+int execute_sortwords_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2 || num_args > 3) {
+        fprintf(stderr, "Usage: sortwords <input_file> [output_file]\n");
+        return 0;
+    }
+
+    const char *input_file = command_line_words[1];
+    const char *output_file = (num_args == 3) ? command_line_words[2] : input_file;
+
+    return sortwords(input_file, output_file);
 }

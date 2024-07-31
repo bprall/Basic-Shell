@@ -37,6 +37,8 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `sort [-r]`: Sort a list of numbers in ascending order by default. If -r is specified, it sorts the numbers in reverse order.
 
+  - `sortwords [input.txt] [output.txt]`: Read words from an input file, sort them, and save them to an output file, or overwrite the input file if no output file is specified.
+
   - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
 
   - `mkdir [dir]`: Create a new directory.
@@ -112,9 +114,9 @@ cssh$ wc -l < input.txt
 cssh$ echo "Hello, World!" > output.txt && cat output.txt
 ```
 
-- **Append Output and Print the File Content:**
+- **Append Output and Sort the File Content:**
 ```sh
-cssh$ echo "Appending text" >> output.txt && cat output.txt
+cssh$ echo "Appending text" >> output.txt && sortwords output.txt
 ```
 
 - **Search for Patterns and Display Results:**

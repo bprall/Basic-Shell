@@ -195,6 +195,8 @@ int execute_command(char **command_line_words, size_t num_args) {
         result = execute_zip_commands(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "unzip") == 0) {
         result = execute_zip_commands(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "sortwords") == 0) {
+        result = execute_sortwords_command(command_line_words, num_args);
     } else {
         result = execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }

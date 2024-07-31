@@ -18,6 +18,7 @@ void cmd_help(const char *command) {
         printf("\tpwd - Print the current working directory\n");
         printf("\twc [-l] [-w] [-c] [FILES...] - Print the number of lines, words, and characters in files\n");
         printf("\tsort [-r] num1 num2 ... - Sort numbers in ascending or descending order\n");
+        printf("\tsortwords [input.txt] [output.txt] - Sort words in a file and write to another file\n");
         printf("\tmv [source] [destination] - Move or rename files and directories\n");
         printf("\techo [text] - Print the specified text to the terminal\n");
         printf("\tcat [file...] - Concatenate and display the content of files\n");
@@ -65,6 +66,12 @@ void cmd_help(const char *command) {
         printf("Example:\n");
         printf("\tcssh$ sort 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5\n");
         printf("\tcssh$ sort -r 3.6 1 4 1.1 5 9 2.7 6 5.3 3 5\n");
+    } else if (strcmp(command, "sortwords") == 0) {
+        // Display help for the sortwords command
+        printf("Usage: sortwords [input.txt] [output.txt]\n");
+        printf("Description: Sorts words in a file in alphabetical order and writes the result to another file, or overwrite the input file if no output file is specified..\n");
+        printf("Example:\n");
+        printf("\tcssh$ sortwords input.txt output.txt\n");
     } else if (strcmp(command, "wc") == 0) {
         // Display help for the wc command
         printf("Usage: wc [-l] [-w] [-c] [FILES...]\n");
