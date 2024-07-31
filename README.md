@@ -112,7 +112,7 @@ cssh$ wc -l < input.txt
 cssh$ echo "Hello, World!" > output.txt && cat output.txt
 ```
 
-- **Append Output and Sort the File Content:**
+- **Append Output and Print the File Content:**
 ```sh
 cssh$ echo "Appending text" >> output.txt && cat output.txt
 ```
