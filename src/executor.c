@@ -2,13 +2,13 @@
 #define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 
-#include <stdio.h>      
-#include <stdlib.h>     
-#include <string.h>     
-#include <errno.h>      
-#include <fcntl.h>      
-#include <unistd.h>     
-#include <sys/types.h>  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <limits.h>
 #include "../include/io.h"
@@ -16,9 +16,10 @@
 #include "../include/utils.h"
 
 
-void handle_pipes(char **command_line_words, int pipe_fd[]) {
+void handle_pipes(char **command_line_words) {
     char **left_cmd = command_line_words;
     char **right_cmd = NULL;
+    int pipe_fd[2];
     int pipe_index = -1;
 
     for (int i = 0; command_line_words[i] != NULL; i++) {
@@ -33,7 +34,8 @@ void handle_pipes(char **command_line_words, int pipe_fd[]) {
         right_cmd = &command_line_words[pipe_index + 1];
         pipe(pipe_fd);
 
-        if (fork() == 0) {
+        pid_t pid1 = fork();
+        if (pid1 == 0) {
             dup2(pipe_fd[1], STDOUT_FILENO);
             close(pipe_fd[0]);
             close(pipe_fd[1]);
@@ -42,7 +44,8 @@ void handle_pipes(char **command_line_words, int pipe_fd[]) {
             exit(1);
         }
 
-        if (fork() == 0) {
+        pid_t pid2 = fork();
+        if (pid2 == 0) {
             dup2(pipe_fd[0], STDIN_FILENO);
             close(pipe_fd[0]);
             close(pipe_fd[1]);
@@ -53,17 +56,17 @@ void handle_pipes(char **command_line_words, int pipe_fd[]) {
 
         close(pipe_fd[0]);
         close(pipe_fd[1]);
-        wait(NULL);
-        wait(NULL);
+        waitpid(pid1, NULL, 0);
+        waitpid(pid2, NULL, 0);
     }
 }
 
-void execute_forked_command(char **command_line_words, int input_redirection, int output_redirection, int append_redirection,
+int execute_forked_command(char **command_line_words, int input_redirection, int output_redirection, int append_redirection,
                             char *input_file, char *output_file) {
     pid_t pid = fork();
     if (pid < 0) {
         perror("fork");
-        exit(1);
+        return 0; 
     } else if (pid == 0) {
         if (input_redirection) {
             int fd = open(input_file, O_RDONLY);
@@ -109,12 +112,11 @@ void execute_forked_command(char **command_line_words, int input_redirection, in
         int status;
         if (waitpid(pid, &status, 0) < 0) {
             perror("waitpid");
-            exit(1);
+            return 0;
         }
     }
+    return 1; 
 }
-
-
 
 int execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;
@@ -124,51 +126,70 @@ int execute_command(char **command_line_words, size_t num_args) {
     char *output_file = NULL;
 
     if (num_args > 0 && strcmp(command_line_words[0], "help") == 0) {
-        execute_help_command(command_line_words, num_args);
-        return 1; // Return 1 to indicate success
+        return execute_help_command(command_line_words, num_args);
     }
 
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
 
+    char **cmd_with_pipes = malloc((num_args + 1) * sizeof(char *));
+    if (cmd_with_pipes == NULL) {
+        perror("malloc");
+        return 0; 
+    }
+    memcpy(cmd_with_pipes, command_line_words, num_args * sizeof(char *));
+    cmd_with_pipes[num_args] = NULL;
+
+    if (strchr((char *)command_line_words, '|')) {
+        handle_pipes(cmd_with_pipes);
+        free(cmd_with_pipes);
+        return 1; 
+    }
+
+    int result;
     if (strcmp(command_line_words[0], "wc") == 0) {
-        execute_wc_command(command_line_words, num_args);
+        result = execute_wc_command(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "cd") == 0) {
         if (num_args > 1) {
             if (chdir(command_line_words[1]) != 0) {
                 perror("chdir");
-                return 0;
+                result = 0;
+            } else {
+                result = 1;
             }
         } else {
             printf("cd: missing argument\n");
-            return 0; // Return 0 to indicate failure
+            result = 0;
         }
     } else if (strcmp(command_line_words[0], "pwd") == 0) {
         char cwd[PATH_MAX];
         if (getcwd(cwd, sizeof(cwd)) != NULL) {
             printf("%s\n", cwd);
+            result = 1;
         } else {
             perror("getcwd");
-            return 0;
+            result = 0;
         }
     } else if (strcmp(command_line_words[0], "history") == 0) {
         int num_to_show = (num_args > 1) ? atoi(command_line_words[1]) : 0;
         print_history(num_to_show);
+        result = 1; // Indicate success
     } else if (strcmp(command_line_words[0], "sort") == 0) {
-        execute_sort_command(command_line_words, num_args);
+        result = execute_sort_command(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "zip") == 0) {
-        execute_zip_commands(command_line_words, num_args);
+        result = execute_zip_commands(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "unzip") == 0) {
-        execute_zip_commands(command_line_words, num_args);
+        result = execute_zip_commands(command_line_words, num_args);
     } else {
-        execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
+        result = execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }
 
-    return 1;
+    free(cmd_with_pipes);
+    return result;
 }
 
 void execute_commands(char **command_line_words, size_t num_args) {
     size_t start_index = 0;
-    int status = 1; // Assume success
+    int status = 1;
 
     for (size_t i = 0; i < num_args; i++) {
         if (strcmp(command_line_words[i], "&&") == 0) {
