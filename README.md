@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project implements a basic command interpreter (shell) in C. It reads user commands, supports input and output redirection, pipelining, and includes built-in commands and command history management. The shell handles signal processing for child process cleanup and ensures proper memory management for command history and command arguments. It also utilizes `fork` and `execvp` for command execution and handles errors while providing a minimal interactive environment. The project includes a `Makefile` for easy compilation and adds support for file compression and decompression via `zip` and `unzip` commands.
+This project implements a basic command interpreter (shell) in C, designed to read user commands and support input and output redirection, pipelining, and command history management. The shell manages signal processing for child process cleanup, ensures memory management for command history and arguments, and uses fork and execvp for executing commands while handling errors effectively. It includes a Makefile for easy compilation and supports file compression and decompression with zip and unzip commands. Additionally, the shell provides the `wc` command to count lines, words, and characters in files or standard input, and the `help` command to display usage information for specific commands, offering general help if no command is specified.
 
 ## Features
 
@@ -26,6 +26,10 @@ This project implements a basic command interpreter (shell) in C. It reads user 
   - `pwd`: Print the current working directory.
 
   - `history`: Show the history of commands entered.
+
+  - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
+
+  - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
 
 - **File Compression and Decompression:**
 
@@ -64,7 +68,7 @@ cd build
 
 The shell will display a prompt (`cssh$`) where you can enter commands.
 
-## Examples
+## Command Examples
 
 - **Run a command:**
 ```sh
@@ -103,6 +107,29 @@ cssh$ pwd
 - **View command history:**
 ```sh
 cssh$ history
+```
+
+- **Count lines, words, and characters in a file:**
+```sh
+cssh$ wc -l file.txt
+cssh$ wc -w file.txt
+cssh$ wc -c file.txt
+```
+
+or
+```sh
+cssh$ wc file.txt
+```
+
+- **Display help for a command:**
+```sh
+cssh$ help history
+cssh$ help zip
+```
+
+- ****
+```sh
+cssh$ help
 ```
 
 - **Zip a file:**

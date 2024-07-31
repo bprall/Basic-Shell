@@ -1,6 +1,9 @@
 #ifndef BUILDINS_H
 #define BUILDINS_H
 
+void cmd_help(const char *command);
+int *get_counts(char *filename);
+void print_counts(int *show, int *count, char *name);
 char *strappend_str(char *s, char *t);
 char *strappend_char(char *s, char c);
 unsigned int find_encoding(char *dictionary[], char *s);

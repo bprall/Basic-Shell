@@ -13,6 +13,7 @@
 char *history[HISTORY_SIZE];
 int history_count = 0;
 
+
 void add_to_history(const char *command) {
     if (history_count < HISTORY_SIZE) {
         history[history_count] = strdup(command);
