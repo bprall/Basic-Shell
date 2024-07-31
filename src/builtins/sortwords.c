@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../../include/utils.h"
 
 #define MAX_LINE_LENGTH 1024
 #define MAX_WORDS 10000
@@ -62,7 +63,7 @@ int sortwords(const char *input_file, const char *output_file) {
         return 0;
     }
 
-    qsort(words, word_count, sizeof(char *), compare_words);
+    merge_sort(words, 0, word_count - 1);
 
     FILE *outfile = fopen(output_file, "w");
     if (!outfile) {
