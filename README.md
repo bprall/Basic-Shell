@@ -25,11 +25,27 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `pwd`: Print the current working directory.
 
+  - `echo [text]`: Print the specified text to the terminal.
+
+  - `cat [file...]`: Concatenate and display the content of files.
+
+  - `grep [pattern] [file...]`: Search for a specified pattern in files and print matching lines.
+
   - `history`: Show the history of commands entered.
 
   - `sort [-r]`: Sort a list of numbers in ascending order by default. If -r is specified, it sorts the numbers in reverse order.
 
   - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
+
+  - `mkdir [dir]`: Create a new directory.
+
+  - `rmdir [dir]`: Remove an empty directory.
+
+  - `rm [file...]`: Remove files. Supports options for recursive removal and force deletion.
+
+  - `mv [source] [destination]`: Move or rename files and directories.
+
+  - `clear`: Clear the terminal screen.
 
   - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
 
