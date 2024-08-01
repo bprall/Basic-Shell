@@ -1,3 +1,5 @@
+#include "../include/config.h"
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +9,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "../include/config.h"
 #include "../../include/utils.h"
 #include "../../include/builtins/help.h"
 #include "../../include/builtins/sort.h"
@@ -202,7 +203,12 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
         return 1;
     }
 
-    const char *alias_command = command_line_words[1];
+    char *alias_command = concatenate_args(command_line_words, num_args);
+    if (!alias_command) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
     char alias[MAX_ALIAS_LENGTH];
     char command[MAX_COMMAND_LENGTH];
     char *equal_sign;
@@ -210,12 +216,14 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
     equal_sign = strchr(alias_command, '=');
     if (equal_sign == NULL) {
         fprintf(stderr, "Invalid Alias format.\nUsage: alias aliasname=\"command\"\n");
+        free(alias_command);
         return 0;
     }
 
     size_t alias_length = equal_sign - alias_command;
     if (alias_length >= MAX_ALIAS_LENGTH) {
         fprintf(stderr, "Alias name too long\n");
+        free(alias_command);
         return 0;
     }
     strncpy(alias, alias_command, alias_length);
@@ -230,6 +238,7 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
     size_t command_length = command_end - command_start;
     if (command_length >= MAX_COMMAND_LENGTH) {
         fprintf(stderr, "Command too long\n");
+        free(alias_command);
         return 0;
     }
     strncpy(command, command_start, command_length);
@@ -239,8 +248,10 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
 
     if (!add_alias(alias, command)) {
         fprintf(stderr, "Failed to add alias\n");
+        free(alias_command);
         return 0;
     }
 
+    free(alias_command);
     return 1;
 }

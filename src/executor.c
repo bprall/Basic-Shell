@@ -166,12 +166,23 @@ int execute_command(char **command_line_words, size_t num_args) {
         char *new_command_line_words[MAX_COMMAND_LENGTH];
         size_t new_num_args = 0;
 
-        new_command_line_words[new_num_args++] = strdup(actual_command);
+        char *command_copy = strdup(actual_command);
+        char *token = strtok(command_copy, " ");
+        while (token != NULL) {
+            if (new_num_args < MAX_COMMAND_LENGTH - 1) {
+                new_command_line_words[new_num_args++] = strdup(token);
+            }
+            token = strtok(NULL, " ");
+        }
+        free(command_copy);
 
         for (size_t i = 1; i < num_args; ++i) {
-            new_command_line_words[new_num_args++] = strdup(command_line_words[i]);
+            if (new_num_args < MAX_COMMAND_LENGTH - 1) {
+                new_command_line_words[new_num_args++] = strdup(command_line_words[i]);
+            }
         }
         new_command_line_words[new_num_args] = NULL;
+
         num_args = new_num_args;
         command_line_words = new_command_line_words;
     }

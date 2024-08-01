@@ -92,3 +92,28 @@ void print_aliases() {
 
     pthread_mutex_unlock(&alias_table.mutex);
 }
+
+char* concatenate_args(char **command_line_words, size_t num_args) {
+    if (num_args < 2) return NULL; 
+
+    size_t total_length = 0;
+    for (size_t i = 1; i < num_args; ++i) {
+        total_length += strlen(command_line_words[i]) + 1;
+    }
+
+    char *command = (char *)malloc(total_length + 1);
+    if (!command) {
+        perror("malloc");
+        return NULL;
+    }
+
+    command[0] = '\0';
+    for (size_t i = 1; i < num_args; ++i) {
+        strcat(command, command_line_words[i]);
+        if (i < num_args - 1) {
+            strcat(command, " "); 
+        }
+    }
+
+    return command;
+}
