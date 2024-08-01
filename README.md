@@ -53,6 +53,8 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `kill [pid]`: Terminate a process by its process ID (PID).
 
+  - `history [n]`: Show full command history or the last **n** commands in the history.
+
   - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
 
 - **File Compression and Decompression:**
@@ -60,8 +62,6 @@ This project implements a basic command interpreter (shell) in C, designed to re
   - `zip [input_file] [output_file]`: Compresses the input file to the specified output file.
 
   - `unzip [input_file] [output_file]`: Decompresses the input file to the specified output file.
-
-- **Command History:** Maintains and displays a history of executed commands.
 
 - **Signal Handling:** Properly handles signals, such as reaping zombie processes.
 
