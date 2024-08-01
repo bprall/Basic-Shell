@@ -11,36 +11,6 @@
 #include <unistd.h>
 
 
-char *strappend_str(char *s, char *t)
-{
-    if (s == NULL || t == NULL)
-    {
-        return NULL;
-    }
-
-    int new_size = strlen(s) + strlen(t) + 1;
-    char *result = (char *)malloc(new_size*sizeof(char));
-    strcpy(result, s);
-    strcat(result, t);
-
-    return result;
-}
-
-char *strappend_char(char *s, char c)
-{
-    if (s == NULL)
-    {
-        return NULL;
-    }
-
-    int new_size = strlen(s) + 2;
-    char *result = (char *)malloc(new_size*sizeof(char));
-    strcpy(result, s);
-    result[new_size-2] = c;
-    result[new_size-1] = '\0';
-
-    return result;
-}
 
 void merge(char *arr[], size_t left, size_t mid, size_t right) {
     size_t n1 = mid - left + 1;

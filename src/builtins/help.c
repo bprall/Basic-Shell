@@ -131,3 +131,12 @@ void cmd_help(const char *command) {
         printf("No help available for '%s'.\n", command);
     }
 }
+
+int execute_help_command(char **command_line_words, size_t num_args) {
+    if (num_args > 1) {
+        cmd_help(command_line_words[1]);
+    } else {
+        cmd_help(NULL);
+    }
+    return 1; 
+}

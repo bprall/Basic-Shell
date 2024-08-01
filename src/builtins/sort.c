@@ -50,3 +50,51 @@ void sort(double *a, int length) {
         }
     }
 }
+
+int execute_sort_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2) {
+        return 0; 
+    }
+
+    int reverse = 0;
+    int actual_num_args = num_args - 1;
+
+    if (strcmp(command_line_words[1], "-r") == 0) {
+        reverse = 1;
+        if (actual_num_args < 2) {
+            return 0; 
+        }
+        actual_num_args--;
+        command_line_words++;
+    }
+
+    double *numbers = (double *)malloc(actual_num_args * sizeof(double));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 0;
+    }
+
+    for (int i = 0; i < actual_num_args; i++) {
+        if (!is_valid_num(command_line_words[i + 1])) {
+            fprintf(stderr, "%s is not a valid number.\n", command_line_words[i + 1]);
+            free(numbers);
+            return 0;
+        }
+        numbers[i] = atof(command_line_words[i + 1]);
+    }
+
+    sort(numbers, actual_num_args);
+
+    if (reverse) {
+        for (int i = actual_num_args - 1; i >= 0; i--) {
+            printf("%g\n", numbers[i]);
+        }
+    } else {
+        for (int i = 0; i < actual_num_args; i++) {
+            printf("%g\n", numbers[i]);
+        }
+    }
+
+    free(numbers);
+    return 1;
+}

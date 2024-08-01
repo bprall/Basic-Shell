@@ -12,6 +12,7 @@
 #include "../../include/io.h"
 #include "../../include/utils.h"
 
+
 int execute_command(char **command_line_words, size_t num_args) {
     int input_redirection = 0;
     int output_redirection = 0;
@@ -19,11 +20,17 @@ int execute_command(char **command_line_words, size_t num_args) {
     char *input_file = NULL;
     char *output_file = NULL;
 
-    if (num_args > 0 && strcmp(command_line_words[0], "help") == 0) {
-        return execute_help_command(command_line_words, num_args);
+    if (num_args < 1) {
+        return 0;
     }
 
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
+
+    if (strcmp(command_line_words[0], "history") == 0) {
+        int num_to_show = (num_args > 1) ? atoi(command_line_words[1]) : 0;
+        print_history(num_to_show);
+        return 1;
+    }
 
     const char *actual_command = get_command_for_alias(command_line_words[0]);
     if (actual_command != NULL) {
@@ -51,51 +58,11 @@ int execute_command(char **command_line_words, size_t num_args) {
         command_line_words = new_command_line_words;
     }
 
-    int result;
-    if (strcmp(command_line_words[0], "wc") == 0) {
-        result = execute_wc_command(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "cd") == 0) {
-        if (num_args > 1) {
-            if (chdir(command_line_words[1]) != 0) {
-                perror("chdir");
-                result = 0;
-            } else {
-                result = 1;
-            }
-        } else {
-            printf("cd: missing argument\n");
-            result = 0;
-        }
-    } else if (strcmp(command_line_words[0], "pwd") == 0) {
-        char cwd[PATH_MAX];
-        if (getcwd(cwd, sizeof(cwd)) != NULL) {
-            printf("%s\n", cwd);
-            result = 1;
-        } else {
-            perror("getcwd");
-            result = 0;
-        }
-    } else if (strcmp(command_line_words[0], "history") == 0) {
-        int num_to_show = (num_args > 1) ? atoi(command_line_words[1]) : 0;
-        print_history(num_to_show);
-        result = 1;
-    } else if (strcmp(command_line_words[0], "grep") == 0) {
-        result = execute_grep_command(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "sort") == 0) {
-        result = execute_sort_command(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "zip") == 0) {
-        result = execute_zip_commands(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "unzip") == 0) {
-        result = execute_zip_commands(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "sortwords") == 0) {
-        result = execute_sortwords_command(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "alias") == 0) {
-        result = execute_alias_command(command_line_words, num_args);
-    } else if (strcmp(command_line_words[0], "unalias") == 0) {
-        result = remove_alias(command_line_words[1]);
-    } else {
+    int result = execute_builtin_commands(command_line_words, num_args);
+    if (result == -1) {
         result = execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }
+
     return result;
 }
 

@@ -117,3 +117,88 @@ char* concatenate_args(char **command_line_words, size_t num_args) {
 
     return command;
 }
+
+int execute_alias_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2) {
+        print_aliases();
+        return 1;
+    }
+
+    char *alias_command = concatenate_args(command_line_words, num_args);
+    if (!alias_command) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    char alias[MAX_ALIAS_LENGTH];
+    char command[MAX_COMMAND_LENGTH];
+    char *equal_sign;
+
+    equal_sign = strchr(alias_command, '=');
+    if (equal_sign == NULL) {
+        fprintf(stderr, "Invalid Alias format.\nUsage: alias aliasname=\"command\"\n");
+        free(alias_command);
+        return 0;
+    }
+
+    size_t alias_length = equal_sign - alias_command;
+    if (alias_length >= MAX_ALIAS_LENGTH) {
+        fprintf(stderr, "Alias name too long\n");
+        free(alias_command);
+        return 0;
+    }
+    strncpy(alias, alias_command, alias_length);
+    alias[alias_length] = '\0';
+
+    char *command_start = equal_sign + 1;
+    while (*command_start == ' ') command_start++;
+    char *command_end = command_start + strlen(command_start) - 1;
+    while (command_end > command_start && *command_end == ' ') command_end--;
+    command_end++;
+
+    size_t command_length = command_end - command_start;
+    if (command_length >= MAX_COMMAND_LENGTH) {
+        fprintf(stderr, "Command too long\n");
+        free(alias_command);
+        return 0;
+    }
+    strncpy(command, command_start, command_length);
+    command[command_length] = '\0';
+
+    remove_quotes(command);
+
+    if (!add_alias(alias, command)) {
+        fprintf(stderr, "Failed to add alias\n");
+        free(alias_command);
+        return 0;
+    }
+
+    free(alias_command);
+    return 1;
+}
+
+int remove_alias(const char *alias) {
+    pthread_mutex_lock(&alias_table.mutex);
+
+    unsigned int index = hash(alias);
+    AliasEntry *entry = alias_table.table[index];
+    AliasEntry *prev = NULL;
+
+    while (entry != NULL) {
+        if (strcmp(entry->alias, alias) == 0) {
+            if (prev == NULL) {
+                alias_table.table[index] = entry->next;
+            } else {
+                prev->next = entry->next;
+            }
+            free(entry);
+            pthread_mutex_unlock(&alias_table.mutex);
+            return 1;
+        }
+        prev = entry;
+        entry = entry->next;
+    }
+
+    pthread_mutex_unlock(&alias_table.mutex);
+    return 0;
+}

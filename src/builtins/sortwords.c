@@ -75,3 +75,15 @@ int sortwords(const char *input_file, const char *output_file) {
 
     return 1;
 }
+
+int execute_sortwords_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2 || num_args > 3) {
+        fprintf(stderr, "Usage: sortwords [input_file] [output_file]\n");
+        return 0;
+    }
+
+    const char *input_file = command_line_words[1];
+    const char *output_file = (num_args == 3) ? command_line_words[2] : input_file;
+
+    return sortwords(input_file, output_file);
+}

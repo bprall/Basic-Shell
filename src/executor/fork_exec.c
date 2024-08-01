@@ -5,6 +5,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 
 int execute_forked_command(char **command_line_words, int input_redirection, int output_redirection, int append_redirection,
