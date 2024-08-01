@@ -29,7 +29,7 @@ int execute_zip_commands(char **command_line_words, size_t num_args) {
             compress(input_file, output_file);
             return 1;
         } else {
-            printf("Usage: zip <input_file> <output_file>\n");
+            printf("Usage: zip [input_file] [output_file]\n");
             return 0;
         }
     } else if (strcmp(command_line_words[0], "unzip") == 0) {
@@ -39,7 +39,7 @@ int execute_zip_commands(char **command_line_words, size_t num_args) {
             uncompress(input_file, output_file);
             return 1;
         } else {
-            printf("Usage: unzip <input_file> <output_file>\n");
+            printf("Usage: unzip [input_file] poutput_file]\n");
             return 0;
         }
     }
@@ -151,7 +151,7 @@ int execute_wc_command(char **command_line_words, size_t num_args) {
 
 int execute_sortwords_command(char **command_line_words, size_t num_args) {
     if (num_args < 2 || num_args > 3) {
-        fprintf(stderr, "Usage: sortwords <input_file> [output_file]\n");
+        fprintf(stderr, "Usage: sortwords [input_file] [output_file]\n");
         return 0;
     }
 
@@ -166,7 +166,7 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
 
     if (num_args == 0) {
         pthread_mutex_unlock(&alias_table.mutex);
-        printf("Usage: alias <alias_name> <command>\n");
+            fprintf(stderr, "Usage: alias [alias_name] [command]\n");
         return 0;
     }
 
@@ -207,6 +207,6 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
     }
 
     pthread_mutex_unlock(&alias_table.mutex);
-    printf("Alias not found\n");
+    fprintf(stderr, "Usage: alias [alias_name] [command]\n");
     return 0;
 }
