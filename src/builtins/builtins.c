@@ -2,13 +2,16 @@
 #define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "../include/config.h"
 #include "../../include/utils.h"
 #include "../../include/builtins/help.h"
 #include "../../include/builtins/sort.h"
@@ -16,6 +19,7 @@
 #include "../../include/builtins/zip.h"
 #include "../../include/builtins/wc.h"
 #include "../../include/builtins/sortwords.h"
+#include "../../include/builtins/alias.h"
 
 int execute_zip_commands(char **command_line_words, size_t num_args) {
     if (strcmp(command_line_words[0], "zip") == 0) {
@@ -155,4 +159,54 @@ int execute_sortwords_command(char **command_line_words, size_t num_args) {
     const char *output_file = (num_args == 3) ? command_line_words[2] : input_file;
 
     return sortwords(input_file, output_file);
+}
+
+int execute_alias_command(char **command_line_words, size_t num_args) {
+    pthread_mutex_lock(&alias_table.mutex);
+
+    if (num_args == 0) {
+        pthread_mutex_unlock(&alias_table.mutex);
+        printf("Usage: alias <alias_name> <command>\n");
+        return 0;
+    }
+
+    unsigned int index = hash(command_line_words[0]);
+    AliasEntry *entry = alias_table.table[index];
+    while (entry != NULL) {
+        if (strcmp(entry->alias, command_line_words[0]) == 0) {
+            char *args[MAX_ARGS];
+            size_t i = 0;
+            char *command_copy = strdup(entry->command);
+            if (!command_copy) {
+                perror("strdup");
+                pthread_mutex_unlock(&alias_table.mutex);
+                printf("Command execution failed\n");
+                return 0;
+            }
+
+            char *token = strtok(command_copy, " ");
+            while (token != NULL && i < MAX_ARGS - 1) {
+                args[i++] = token;
+                token = strtok(NULL, " ");
+            }
+            args[i] = NULL;
+
+            if (execvp(args[0], args) == -1) {
+                perror("execvp");
+                free(command_copy);
+                pthread_mutex_unlock(&alias_table.mutex);
+                printf("Command execution failed\n");
+                return 0;
+            }
+
+            free(command_copy);
+            pthread_mutex_unlock(&alias_table.mutex);
+            return 1;
+        }
+        entry = entry->next;
+    }
+
+    pthread_mutex_unlock(&alias_table.mutex);
+    printf("Alias not found\n");
+    return 0;
 }

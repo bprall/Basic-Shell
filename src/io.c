@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "../include/config.h"
 
-#define MAX_ARGS 32
 #define HISTORY_SIZE 100
 
 

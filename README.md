@@ -33,8 +33,6 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `grep [pattern] [file...]`: Search for a specified pattern in files and print matching lines.
 
-  - `history`: Show the history of commands entered.
-
   - `sort [-r]`: Sort a list of numbers in ascending by standard input. If -r is specified, it sorts the numbers in reverse order.
 
   - `sortwords [input.txt] [output.txt]`: Read words from an input file, sort them, and save them to an output file, or overwrite the input file if no output file is specified.
@@ -52,6 +50,10 @@ This project implements a basic command interpreter (shell) in C, designed to re
   - `clear`: Clear the terminal screen.
 
   - `kill [pid]`: Terminate a process by its process ID (PID).
+  
+  - `alias [alias_name] [command]`: Define a new alias or update an existing alias with the specified command.
+
+  - `unalias [alias_name]`: Remove an existing alias.
 
   - `history [n]`: Show full command history or the last **n** commands in the history.
 

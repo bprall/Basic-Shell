@@ -20,7 +20,6 @@ void handle_pipes(char **command_line_words) {
     int pipe_count = 0;
     int i = 0;
     
-    // Count the number of pipes
     while (command_line_words[i] != NULL) {
         if (strcmp(command_line_words[i], "|") == 0) {
             pipe_count++;
@@ -197,6 +196,10 @@ int execute_command(char **command_line_words, size_t num_args) {
         result = execute_zip_commands(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "sortwords") == 0) {
         result = execute_sortwords_command(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "alias") == 0) {
+        result = execute_alias_command(command_line_words, num_args);
+    } else if (strcmp(command_line_words[0], "unalias") == 0) {
+        result = remove_alias(command_line_words[1]);
     } else {
         result = execute_forked_command(command_line_words, input_redirection, output_redirection, append_redirection, input_file, output_file);
     }
