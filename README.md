@@ -35,7 +35,7 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
   - `history`: Show the history of commands entered.
 
-  - `sort [-r]`: Sort a list of numbers in ascending order by default. If -r is specified, it sorts the numbers in reverse order.
+  - `sort [-r]`: Sort a list of numbers in ascending by standard input. If -r is specified, it sorts the numbers in reverse order.
 
   - `sortwords [input.txt] [output.txt]`: Read words from an input file, sort them, and save them to an output file, or overwrite the input file if no output file is specified.
 
