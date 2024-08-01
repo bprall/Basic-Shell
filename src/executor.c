@@ -13,6 +13,7 @@
 #include <limits.h>
 #include "../include/io.h"
 #include "../include/builtins/builtins.h"
+#include "../include/builtins/alias.h"
 #include "../include/utils.h"
 
 
@@ -159,6 +160,21 @@ int execute_command(char **command_line_words, size_t num_args) {
     }
 
     handle_redirection(command_line_words, num_args, &input_redirection, &output_redirection, &append_redirection, &input_file, &output_file);
+
+    const char *actual_command = get_command_for_alias(command_line_words[0]);
+    if (actual_command != NULL) {
+        char *new_command_line_words[MAX_COMMAND_LENGTH];
+        size_t new_num_args = 0;
+
+        new_command_line_words[new_num_args++] = strdup(actual_command);
+
+        for (size_t i = 1; i < num_args; ++i) {
+            new_command_line_words[new_num_args++] = strdup(command_line_words[i]);
+        }
+        new_command_line_words[new_num_args] = NULL;
+        num_args = new_num_args;
+        command_line_words = new_command_line_words;
+    }
 
     int result;
     if (strcmp(command_line_words[0], "wc") == 0) {

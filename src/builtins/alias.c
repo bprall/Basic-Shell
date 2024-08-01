@@ -47,6 +47,23 @@ int add_alias(const char *alias, const char *command) {
     return 1;
 }
 
+const char* get_command_for_alias(const char *alias) {
+    pthread_mutex_lock(&alias_table.mutex);
+
+    unsigned int index = hash(alias);
+    AliasEntry *entry = alias_table.table[index];
+    while (entry != NULL) {
+        if (strcmp(entry->alias, alias) == 0) {
+            pthread_mutex_unlock(&alias_table.mutex);
+            return entry->command;
+        }
+        entry = entry->next;
+    }
+
+    pthread_mutex_unlock(&alias_table.mutex);
+    return NULL;
+}
+
 void remove_quotes(char *str) {
     size_t len = strlen(str);
 
