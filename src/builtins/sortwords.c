@@ -6,9 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../include/utils.h"
-
-#define MAX_LINE_LENGTH 1024
-#define MAX_WORDS 10000
+#include "../../include/config.h"
 
 int compare_words(const void *a, const void *b) {
     return strcmp(*(const char **)a, *(const char **)b);

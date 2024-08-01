@@ -203,3 +203,42 @@ int execute_alias_command(char **command_line_words, size_t num_args) {
 
     return 1;
 }
+
+int execute_grep_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2) {
+        printf("Usage: grep <pattern> [file...]\n");
+        return 0;
+    }
+
+    char *pattern = command_line_words[1];
+    int found = 0;
+    
+    if (num_args > 2) {
+        for (size_t i = 2; i < num_args; ++i) {
+            FILE *file = fopen(command_line_words[i], "r");
+            if (file == NULL) {
+                perror("fopen");
+                continue;
+            }
+            
+            char line[MAX_LINE_LENGTH];
+            while (fgets(line, sizeof(line), file) != NULL) {
+                if (strstr(line, pattern) != NULL) {
+                    printf("%s: %s", command_line_words[i], line);
+                    found = 1;
+                }
+            }
+            fclose(file);
+        }
+    } else {
+        char line[MAX_LINE_LENGTH];
+        while (fgets(line, sizeof(line), stdin) != NULL) {
+            if (strstr(line, pattern) != NULL) {
+                printf("%s", line);
+                found = 1;
+            }
+        }
+    }
+
+    return found ? 1 : 0;
+}
