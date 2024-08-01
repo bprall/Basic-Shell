@@ -187,7 +187,7 @@ int execute_command(char **command_line_words, size_t num_args) {
     } else if (strcmp(command_line_words[0], "history") == 0) {
         int num_to_show = (num_args > 1) ? atoi(command_line_words[1]) : 0;
         print_history(num_to_show);
-        result = 1; // Indicate success
+        result = 1;
     } else if (strcmp(command_line_words[0], "sort") == 0) {
         result = execute_sort_command(command_line_words, num_args);
     } else if (strcmp(command_line_words[0], "zip") == 0) {

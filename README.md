@@ -23,41 +23,41 @@ This project implements a basic command interpreter (shell) in C, designed to re
 
 - **Built-in Commands:**
 
-  - `cd [dir]`: Change the current working directory.
-
-  - `pwd`: Print the current working directory.
-
-  - `echo [text]`: Print the specified text to the terminal.
+  - `alias [alias_name="command"]`: Define a new alias, update an existing alias with the specified command, or list existing aliases if no alias name and command are provided.
 
   - `cat [file...]`: Concatenate and display the content of files.
 
+  - `cd [dir]`: Change the current working directory.
+
+  - `clear`: Clear the terminal screen.
+
+  - `echo [text]`: Print the specified text to the terminal.
+
   - `grep [pattern] [file...]`: Search for a specified pattern in files and print matching lines.
+
+  - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
+
+  - `history [n]`: Show full command history or the last **n** commands in the history.
+
+  - `kill [pid]`: Terminate a process by its process ID (PID).
+
+  - `mkdir [dir]`: Create a new directory.
+
+  - `mv [source] [destination]`: Move or rename files and directories.
+
+  - `pwd`: Print the current working directory.
+
+  - `rm [file...]`: Remove files. Supports options for recursive removal and force deletion.
+
+  - `rmdir [dir]`: Remove an empty directory.
 
   - `sort [-r]`: Sort a list of numbers in ascending by standard input. If -r is specified, it sorts the numbers in reverse order.
 
   - `sortwords [input.txt] [output.txt]`: Read words from an input file, sort them, and save them to an output file, or overwrite the input file if no output file is specified.
 
-  - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
-
-  - `mkdir [dir]`: Create a new directory.
-
-  - `rmdir [dir]`: Remove an empty directory.
-
-  - `rm [file...]`: Remove files. Supports options for recursive removal and force deletion.
-
-  - `mv [source] [destination]`: Move or rename files and directories.
-
-  - `clear`: Clear the terminal screen.
-
-  - `kill [pid]`: Terminate a process by its process ID (PID).
-  
-  - `alias [alias_name] [command]`: Define a new alias or update an existing alias with the specified command.
-
   - `unalias [alias_name]`: Remove an existing alias.
 
-  - `history [n]`: Show full command history or the last **n** commands in the history.
-
-  - `help [command]`: Display usage information for a specific command. If no command is specified, show general help.
+  - `wc [-l] [-w] [-c] [FILES...]`: Print the number of lines, words, and characters in files. If no files are given, it reads from standard input.
 
 - **File Compression and Decompression:**
 
@@ -136,14 +136,14 @@ cssh$ history | grep "search_term"
 cssh$ zip example.txt example.zip && unzip example.zip
 ```
 
-- **Display Help for Commands and View History:**
+- **Define Alias and Execute:**
 ```sh
-cssh$ help && history
+cssh$ alias list="ls -l" && list
 ```
 
-- **Exit the Shell:**
+- **Remove an Alias and Verify:**
 ```sh
-cssh$ exit
+cssh$ unalias list && history | grep "list"
 ```
 
 ## Error Handling

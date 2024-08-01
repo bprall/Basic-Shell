@@ -27,8 +27,6 @@ void sigchld_handler(int signo) {
     while (waitpid(-1, NULL, WNOHANG) > 0) {}
 }
 
-
-
 char *strappend_str(char *s, char *t)
 {
     if (s == NULL || t == NULL)

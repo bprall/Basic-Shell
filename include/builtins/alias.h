@@ -23,5 +23,7 @@ extern AliasTable alias_table;
 
 unsigned int hash(const char *str);
 int add_alias(const char *alias, const char *command);
+void remove_quotes(char *str);
+void print_aliases();
 
 #endif // ALIAS_H

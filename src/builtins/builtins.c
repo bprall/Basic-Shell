@@ -162,51 +162,44 @@ int execute_sortwords_command(char **command_line_words, size_t num_args) {
 }
 
 int execute_alias_command(char **command_line_words, size_t num_args) {
-    pthread_mutex_lock(&alias_table.mutex);
+    if (num_args < 2) {
+        print_aliases();
+        return 1;
+    }
 
-    if (num_args == 0) {
-        pthread_mutex_unlock(&alias_table.mutex);
-            fprintf(stderr, "Usage: alias [alias_name] [command]\n");
+    const char *alias_command = command_line_words[1];
+    char alias[MAX_ALIAS_LENGTH];
+    char command[MAX_COMMAND_LENGTH];
+    char *equal_sign;
+
+    equal_sign = strchr(alias_command, '=');
+    if (equal_sign == NULL) {
+        fprintf(stderr, "Invalid Alias format.\nUsage: alias aliasname=\"command\"\n");
         return 0;
     }
 
-    unsigned int index = hash(command_line_words[0]);
-    AliasEntry *entry = alias_table.table[index];
-    while (entry != NULL) {
-        if (strcmp(entry->alias, command_line_words[0]) == 0) {
-            char *args[MAX_ARGS];
-            size_t i = 0;
-            char *command_copy = strdup(entry->command);
-            if (!command_copy) {
-                perror("strdup");
-                pthread_mutex_unlock(&alias_table.mutex);
-                printf("Command execution failed\n");
-                return 0;
-            }
+    size_t alias_length = equal_sign - alias_command;
+    if (alias_length >= MAX_ALIAS_LENGTH) {
+        fprintf(stderr, "Alias name too long\n");
+        return 0;
+    }
+    strncpy(alias, alias_command, alias_length);
+    alias[alias_length] = '\0';
 
-            char *token = strtok(command_copy, " ");
-            while (token != NULL && i < MAX_ARGS - 1) {
-                args[i++] = token;
-                token = strtok(NULL, " ");
-            }
-            args[i] = NULL;
+    size_t command_length = strlen(equal_sign + 1);
+    if (command_length >= MAX_COMMAND_LENGTH) {
+        fprintf(stderr, "Command too long\n");
+        return 0;
+    }
+    strncpy(command, equal_sign + 1, command_length);
+    command[command_length] = '\0';
 
-            if (execvp(args[0], args) == -1) {
-                perror("execvp");
-                free(command_copy);
-                pthread_mutex_unlock(&alias_table.mutex);
-                printf("Command execution failed\n");
-                return 0;
-            }
+    remove_quotes(command);
 
-            free(command_copy);
-            pthread_mutex_unlock(&alias_table.mutex);
-            return 1;
-        }
-        entry = entry->next;
+    if (!add_alias(alias, command)) {
+        fprintf(stderr, "Failed to add alias\n");
+        return 0;
     }
 
-    pthread_mutex_unlock(&alias_table.mutex);
-    fprintf(stderr, "Usage: alias [alias_name] [command]\n");
-    return 0;
+    return 1;
 }

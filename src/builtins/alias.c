@@ -4,7 +4,6 @@
 #include <pthread.h>
 #include "../../include/builtins/alias.h"
 
-
 AliasTable alias_table = {.mutex = PTHREAD_MUTEX_INITIALIZER};
 
 unsigned int hash(const char *str) {
@@ -46,4 +45,34 @@ int add_alias(const char *alias, const char *command) {
 
     pthread_mutex_unlock(&alias_table.mutex);
     return 1;
+}
+
+void remove_quotes(char *str) {
+    size_t len = strlen(str);
+
+    if (len > 0 && str[0] == '"' && str[len - 1] == '"') {
+        memmove(str, str + 1, len - 2);
+        str[len - 2] = '\0';
+        len -= 2; 
+    }
+
+    if (len > 0 && str[0] == '\'' && str[len - 1] == '\'') {
+        memmove(str, str + 1, len - 2);
+        str[len - 2] = '\0';
+    }
+}
+
+void print_aliases() {
+    pthread_mutex_lock(&alias_table.mutex);
+
+    printf("Aliases:\n");
+    for (unsigned int i = 0; i < TABLE_SIZE; ++i) {
+        AliasEntry *entry = alias_table.table[i];
+        while (entry != NULL) {
+            printf("Alias: %s\tCommand: %s\n\n", entry->alias, entry->command);
+            entry = entry->next;
+        }
+    }
+
+    pthread_mutex_unlock(&alias_table.mutex);
 }

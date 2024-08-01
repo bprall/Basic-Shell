@@ -24,7 +24,7 @@ void cmd_help(const char *command) {
         printf("\tcat [file...] - Concatenate and display the content of files\n");
         printf("\tgrep [pattern] [file...] - Search for a specified pattern in files and print matching lines\n");
         printf("\tclear - Clear the terminal screen\n");
-        printf("\talias [alias_name] [command] - Create an alias for a command\n");
+        printf("\talias [alias_name='command'] - Create an alias for a command, or list aliases if no 'aliasname' given.\n");
         printf("\tunalias [alias_name] - Remove an alias\n");
         printf("\texit - Exit the shell\n");
     } else if (strcmp(command, "history") == 0) {
@@ -115,10 +115,10 @@ void cmd_help(const char *command) {
         printf("Description: Clears the terminal screen.\n");
     } else if (strcmp(command, "alias") == 0) {
         // Display help for the alias command
-        printf("Usage: alias [alias_name] [command]\n");
+        printf("Usage: alias aliasname=\"command\"\n");
         printf("Description: Creates an alias for a command. The alias will substitute the command with the provided name.\n");
         printf("Example:\n");
-        printf("\tcssh$ alias ll 'ls -l'\n");
+        printf("\tcssh$ alias ll='ls -l'\n");
     } else if (strcmp(command, "unalias") == 0) {
         // Display help for the unalias command
         printf("Usage: unalias [alias_name]\n");
