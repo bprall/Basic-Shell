@@ -1,7 +1,3 @@
-#define _POSIX_C_SOURCE 200809L
-#define _DEFAULT_SOURCE
-#define _BSD_SOURCE
-
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,49 +157,6 @@ int execute_sortwords_command(char **command_line_words, size_t num_args) {
     return sortwords(input_file, output_file);
 }
 
-int execute_alias_command(char **command_line_words, size_t num_args) {
-    if (num_args < 2) {
-        print_aliases();
-        return 1;
-    }
-
-    const char *alias_command = command_line_words[1];
-    char alias[MAX_ALIAS_LENGTH];
-    char command[MAX_COMMAND_LENGTH];
-    char *equal_sign;
-
-    equal_sign = strchr(alias_command, '=');
-    if (equal_sign == NULL) {
-        fprintf(stderr, "Invalid Alias format.\nUsage: alias aliasname=\"command\"\n");
-        return 0;
-    }
-
-    size_t alias_length = equal_sign - alias_command;
-    if (alias_length >= MAX_ALIAS_LENGTH) {
-        fprintf(stderr, "Alias name too long\n");
-        return 0;
-    }
-    strncpy(alias, alias_command, alias_length);
-    alias[alias_length] = '\0';
-
-    size_t command_length = strlen(equal_sign + 1);
-    if (command_length >= MAX_COMMAND_LENGTH) {
-        fprintf(stderr, "Command too long\n");
-        return 0;
-    }
-    strncpy(command, equal_sign + 1, command_length);
-    command[command_length] = '\0';
-
-    remove_quotes(command);
-
-    if (!add_alias(alias, command)) {
-        fprintf(stderr, "Failed to add alias\n");
-        return 0;
-    }
-
-    return 1;
-}
-
 int execute_grep_command(char **command_line_words, size_t num_args) {
     if (num_args < 2) {
         printf("Usage: grep <pattern> [file...]\n");
@@ -241,4 +194,53 @@ int execute_grep_command(char **command_line_words, size_t num_args) {
     }
 
     return found ? 1 : 0;
+}
+
+int execute_alias_command(char **command_line_words, size_t num_args) {
+    if (num_args < 2) {
+        print_aliases();
+        return 1;
+    }
+
+    const char *alias_command = command_line_words[1];
+    char alias[MAX_ALIAS_LENGTH];
+    char command[MAX_COMMAND_LENGTH];
+    char *equal_sign;
+
+    equal_sign = strchr(alias_command, '=');
+    if (equal_sign == NULL) {
+        fprintf(stderr, "Invalid Alias format.\nUsage: alias aliasname=\"command\"\n");
+        return 0;
+    }
+
+    size_t alias_length = equal_sign - alias_command;
+    if (alias_length >= MAX_ALIAS_LENGTH) {
+        fprintf(stderr, "Alias name too long\n");
+        return 0;
+    }
+    strncpy(alias, alias_command, alias_length);
+    alias[alias_length] = '\0';
+
+    char *command_start = equal_sign + 1;
+    while (*command_start == ' ') command_start++;
+    char *command_end = command_start + strlen(command_start) - 1;
+    while (command_end > command_start && *command_end == ' ') command_end--;
+    command_end++;
+
+    size_t command_length = command_end - command_start;
+    if (command_length >= MAX_COMMAND_LENGTH) {
+        fprintf(stderr, "Command too long\n");
+        return 0;
+    }
+    strncpy(command, command_start, command_length);
+    command[command_length] = '\0';
+
+    remove_quotes(command);
+
+    if (!add_alias(alias, command)) {
+        fprintf(stderr, "Failed to add alias\n");
+        return 0;
+    }
+
+    return 1;
 }

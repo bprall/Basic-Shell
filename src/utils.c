@@ -1,6 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
-#define _DEFAULT_SOURCE
-#define _BSD_SOURCE
+#include "../include/config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,20 +10,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
-void free_command(char **words, size_t num_args) {
-    for (size_t i = 0; i < num_args; ++i) {
-        if (words[i] != NULL) {
-            free(words[i]);
-        }
-    }
-    free(words);
-}
-
-void sigchld_handler(int signo) {
-    (void) signo;
-    while (waitpid(-1, NULL, WNOHANG) > 0) {}
-}
 
 char *strappend_str(char *s, char *t)
 {

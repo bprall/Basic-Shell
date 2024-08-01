@@ -1,6 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
-#define _DEFAULT_SOURCE
-#define _BSD_SOURCE
+#include "../include/config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -10,10 +8,25 @@
 #include <unistd.h>
 #include <limits.h>
 #include <signal.h>
+
 #include "../include/executor.h"
 #include "../include/io.h"
 #include "../include/utils.h"
 
+
+void sigchld_handler(int signo) {
+    (void) signo;
+    while (waitpid(-1, NULL, WNOHANG) > 0) {}
+}
+
+void free_command(char **words, size_t num_args) {
+    for (size_t i = 0; i < num_args; ++i) {
+        if (words[i] != NULL) {
+            free(words[i]);
+        }
+    }
+    free(words);
+}
 
 int main() {
     struct sigaction sa;

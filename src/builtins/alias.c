@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "../../include/builtins/alias.h"
+#include "../../include/config.h"
 
 AliasTable alias_table = {.mutex = PTHREAD_MUTEX_INITIALIZER};
 
@@ -70,10 +71,8 @@ void remove_quotes(char *str) {
     if (len > 0 && str[0] == '"' && str[len - 1] == '"') {
         memmove(str, str + 1, len - 2);
         str[len - 2] = '\0';
-        len -= 2; 
     }
-
-    if (len > 0 && str[0] == '\'' && str[len - 1] == '\'') {
+    else if (len > 0 && str[0] == '\'' && str[len - 1] == '\'') {
         memmove(str, str + 1, len - 2);
         str[len - 2] = '\0';
     }

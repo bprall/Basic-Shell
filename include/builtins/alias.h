@@ -1,12 +1,13 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
+#include "../config.h"
+
 #include <pthread.h>
 #include <stddef.h>
 
 #define TABLE_SIZE 100
 #define MAX_ALIAS_LENGTH 256
-#define MAX_COMMAND_LENGTH 1024
 
 typedef struct AliasEntry {
     char alias[MAX_ALIAS_LENGTH];
