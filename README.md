@@ -138,7 +138,7 @@ cssh$ zip example.txt example.zip && unzip example.zip
 
 - **Define Alias and Execute:**
 ```sh
-cssh$ alias list="ls" && list
+cssh$ alias list="ls -l" && list
 ```
 
 - **Remove an Alias and Verify:**
